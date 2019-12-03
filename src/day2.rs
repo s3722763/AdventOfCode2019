@@ -3,22 +3,13 @@ use std::io::Read;
 use std::str::FromStr;
 
 pub fn day2_first_run() -> Result<(), failure::Error> {
-	let mut file = File::open("./day2.txt")?;
-	let mut file_data = String::new();
-	file.read_to_string(&mut file_data)?;
-	let data_str_split = file_data.split(",");
-	let mut memory: Vec<u32> = Vec::new();
+	if let Ok(mut memory) = get_day2_lines() {
+		memory[1] = 12;
+		memory[2] = 2;
 
-	for data in data_str_split {
-		let number = u32::from_str(data)?;
-		memory.push(number);
+		day2_first_process(&mut memory);
+		println!("Day 2 part 1 result: {}", memory[0]);
 	}
-
-	memory[1] = 12;
-	memory[2] = 2;
-
-	day2_first_process(&mut memory);
-	println!("Day 2 part 1 result: {}", memory[0]);
 
 	Ok(())
 }
@@ -46,6 +37,30 @@ fn day2_first_process(memory: &mut Vec<u32>) -> Result<(), failure::Error> {
 	Ok(())
 }
 
+pub fn day2_second_run() -> Result<(), failure::Error> {
+	if let Ok(file_data) = get_day2_lines() {
+
+		'running: loop {
+			for noun in 0..100 {
+				for verb in 0..100 {
+					let mut memory = file_data.clone();
+					memory[1] = noun;
+					memory[2] = verb;
+					day2_first_process(&mut memory);
+
+					if memory[0] == 19690720 {
+						println!("Day 2 part 2 result: {}", (100 * noun) + verb);
+						break 'running;
+					}
+				}
+			}
+		}
+
+	}
+
+	Ok(())
+}
+
 fn run_op_code(pc: &usize, opcode: u32, memory: &mut Vec<u32>) {
 	let pos_1 = memory[pc+1];
 	let pos_2 = memory[pc+2];
@@ -66,6 +81,22 @@ fn run_op_code(pc: &usize, opcode: u32, memory: &mut Vec<u32>) {
 		_ => {}
 	}
 }
+
+fn get_day2_lines() -> Result<Vec<u32>, failure::Error> {
+	let mut file = File::open("./day2.txt")?;
+	let mut file_data = String::new();
+	file.read_to_string(&mut file_data)?;
+	let data_str_split = file_data.split(",");
+	let mut memory: Vec<u32> = Vec::new();
+
+	for data in data_str_split {
+		let number = u32::from_str(data)?;
+		memory.push(number);
+	}
+
+	Ok(memory)
+}
+
 
 #[cfg(test)]
 mod tests {
