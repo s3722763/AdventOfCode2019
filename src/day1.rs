@@ -14,7 +14,7 @@ pub fn day1_first_run() -> Result<(), failure::Error> {
 			sum += day1_first_process(num);
 		}
 
-		println!("Day 1 part 2 result: {}", sum);
+		println!("Day 1 part 1 result: {}", sum);
 	}
 
 	Ok(())
